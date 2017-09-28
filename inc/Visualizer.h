@@ -13,7 +13,7 @@ class Visualizer {
 public:
     Visualizer();
 
-    void Visualize(std::string type);
+    void Visualize(std::string type,cv::Affine3d pose);
 
 private:
     cv::viz::Viz3d myWindow;

@@ -5,14 +5,24 @@
 
 int main() {
 
-    cv::Mat img_ref=cv::imread("./box_img.jpg",cv::IMREAD_GRAYSCALE);
     Descriptor descriptor("./box_img.jpg");
+    Visualizer visualizer;
+    Pose pose(cv::Point2d(0,10),40);
+
+    cv::Mat img_ref=cv::imread("./box_img.jpg",cv::IMREAD_GRAYSCALE);
     cv::resize(img_ref,img_ref,cv::Size(),descriptor.resize_scale,descriptor.resize_scale);
 
     cv::VideoCapture cap("box.mp4");
     cv::Mat frame;
 
     std::vector<cv::Point3f> model_points;
+    std::vector<cv::Point2f> img_points;
+    img_points.push_back(cv::Point2f(0, 0));
+    img_points.push_back(cv::Point2f(0, 30));
+    img_points.push_back(cv::Point2f(30, 0));
+    img_points.push_back(cv::Point2f(30, 30));
+    //img_points.push_back(cv::Point2f(345, 465));
+    //img_points.push_back(cv::Point2f(453, 469));
 
     double max_fps=0;
     clock_t start, stop;
@@ -39,6 +49,10 @@ int main() {
         double fps=1/(((double)(stop-start))/CLOCKS_PER_SEC);
         std::cout<< fps<<std::endl;
 
+        img_points[5].x=std::fmod(img_points[5].x+1,500);
+        pose.EstimatePose(img_points,model_points);
+        visualizer.Visualize("axis",pose.epose);
+
         //descriptor.DrawBoundingBox(grayscale);
         if(fps>max_fps)
         {
@@ -46,17 +60,8 @@ int main() {
         }
     }
 
-    std::vector<cv::Point2f> img_points;
-    img_points.push_back(cv::Point2f(359, 391)); // Nose tip
-    img_points.push_back(cv::Point2f(399, 561));    // Chin
-    img_points.push_back(cv::Point2f(337, 297));    // Left eye left corner
-    img_points.push_back(cv::Point2f(513, 301));    // Right eye right corner
-    img_points.push_back(cv::Point2f(345, 465));    // Left Mouth corner
-    img_points.push_back(cv::Point2f(453, 469));
-
-    Pose pose;
-    pose.EstimatePose(img_points,model_points);
-
     std::cout<<"max fps:"<< max_fps<<std::endl;
+
+    //std::cout<<"Pose: "<<pose.epose.matrix<<std::endl;
     return 0;
 }
