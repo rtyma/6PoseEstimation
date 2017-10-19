@@ -41,6 +41,9 @@ void Descriptor::SURF_GPU(cv::Mat scene_img)
     surf.downloadKeypoints(keypoints2GPU, this->keypoints_2);
 
     Ratio_test(descriptors1GPU.rows,matches);
+    create_2dpoint_list();
+
+    //std::cout<<"dopasowania: "<<this->good_matches.size()<<std::endl;
 }
 
 void Descriptor::Ratio_test(int size,std::vector< cv::DMatch > matches)
@@ -64,7 +67,7 @@ void Descriptor::Visualizer(cv::Mat scene_img,cv::Mat ref_img)
 {
     cv::Mat img_matches;
     drawMatches( ref_img, this->keypoints_1, scene_img, this->keypoints_2,
-                 this->good_matches, img_matches, cv::Scalar::all(255), cv::Scalar::all(255),
+                 this->good_matches, img_matches, cv::Scalar::all(-1), cv::Scalar::all(-1),
                  std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
     cv::imshow("test",img_matches);
@@ -86,24 +89,35 @@ void Descriptor::DrawBoundingBox(cv::Mat img)
     }
 
     std::vector<cv::Point2f> obj_corners(4);
-    obj_corners[0]=(cv::Point2f(107,158));
-    obj_corners[1]=(cv::Point2f(303,287));
-    obj_corners[2]=(cv::Point2f(487,191));
-    obj_corners[3]=(cv::Point2f(288,75));
-
-    std::vector<cv::Point2f> scene_corners(4);
+    obj_corners[0]=(cv::Point2f(0,0));
+    obj_corners[1]=(cv::Point2f(0,this->img_ref.rows));
+    obj_corners[2]=(cv::Point2f(this->img_ref.cols,this->img_ref.rows));
+    obj_corners[3]=(cv::Point2f(this->img_ref.cols,0));
 
     if(!H.empty()) {
-        cv::perspectiveTransform(obj_corners, scene_corners, H);
+        cv::perspectiveTransform(obj_corners, this->scene_corners, H);
     }
 
     cv::Mat frame;
     cv::cvtColor(img,frame,CV_GRAY2BGR);
 
-    line( frame, scene_corners[0] , scene_corners[1] , cv::Scalar(0, 255, 0), 4 );
-    line( frame, scene_corners[1] , scene_corners[2] , cv::Scalar( 0, 255, 0), 4 );
-    line( frame, scene_corners[2] , scene_corners[3] , cv::Scalar( 0, 255, 0), 4 );
-    line( frame, scene_corners[3] , scene_corners[0] , cv::Scalar( 0, 255, 0), 4 );
+    line( frame, this->scene_corners[0] , this->scene_corners[1] , cv::Scalar(0, 255, 0), 4 );
+    line( frame, this->scene_corners[1] , this->scene_corners[2] , cv::Scalar( 0, 255, 0), 4 );
+    line( frame, this->scene_corners[2] , this->scene_corners[3] , cv::Scalar( 0, 255, 0), 4 );
+    line( frame, this->scene_corners[3] , this->scene_corners[0] , cv::Scalar( 0, 255, 0), 4 );
 
-    imshow( "frame", frame);
+    cv::circle(frame,this->scene_corners[1],2,cv::Scalar(0,0,255),3);
+
+    imshow( "Detected object", frame);
+}
+
+void Descriptor::create_2dpoint_list()
+{
+    point_list_2d.clear();
+
+    for(unsigned int match_index = 0; match_index < good_matches.size(); ++match_index)
+    {
+        cv::Point2f point2d_scene = this->keypoints_2[match_index].pt;
+        point_list_2d.push_back(point2d_scene);
+    }
 }

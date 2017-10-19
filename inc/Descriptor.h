@@ -25,11 +25,14 @@ public:
     void Visualizer(cv::Mat scene_img,cv::Mat ref_img);
     void DrawBoundingBox(cv::Mat img);
 
-    float resize_scale=0.4;
+    float resize_scale=1.5;
+    std::vector<cv::Point2f> point_list_2d;
+    std::vector<cv::Point2f> scene_corners;
 
 private:
 
     void Ratio_test(int size,std::vector< cv::DMatch > matches);
+    void create_2dpoint_list();
 
     cv::cuda::GpuMat img_ref;
     cv::cuda::GpuMat img_scene;

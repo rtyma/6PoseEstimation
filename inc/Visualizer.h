@@ -13,9 +13,12 @@ class Visualizer {
 public:
     Visualizer();
 
-    void Visualize(std::string type,cv::Affine3d pose);
+    void Visualize(std::string type,cv::Affine3d pose,cv::Point2f center=cv::Point2f(0,0));
+    void Visualize_points(std::vector<cv::Point2f> points);
 
 private:
+    void drawArrow(cv::Mat image, cv::Point2i p, cv::Point2i q, cv::Scalar color, int arrowMagnitude, int thickness, int line_type, int shift);
+
     cv::viz::Viz3d myWindow;
 };
 

@@ -7,7 +7,7 @@ FIND_PACKAGE(OpenCV 3 REQUIRED core flann xfeatures2d features2d imgcodecs imgpr
 
 set(CMAKE_CXX_STANDARD 14)
 
-set(SOURCE_FILES main.cpp src/Descriptor.cpp inc/Descriptor.h src/Visualizer.cpp inc/Visualizer.h src/Pose.cpp inc/Pose.h)
+set(SOURCE_FILES main.cpp src/Descriptor.cpp inc/Descriptor.h src/Visualizer.cpp inc/Visualizer.h src/Pose.cpp inc/Pose.h src/Kalman.cpp inc/Kalman.h)
 add_executable(6PoseEstmation ${SOURCE_FILES})
 
 set ( DEPENDENCIES ${OpenCV_LIBS} )
