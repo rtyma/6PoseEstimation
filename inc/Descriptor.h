@@ -20,12 +20,13 @@ class Descriptor {
 
 public:
     Descriptor(std::string img_path);
+    Descriptor(cv::Mat img);
 
     void SURF_GPU(cv::Mat scene_img);
     void Visualizer(cv::Mat scene_img,cv::Mat ref_img);
     void DrawBoundingBox(cv::Mat img);
 
-    float resize_scale=1.5;
+    float resize_scale=1;
     std::vector<cv::Point2f> point_list_2d;
     std::vector<cv::Point2f> scene_corners;
 

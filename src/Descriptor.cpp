@@ -15,6 +15,16 @@ Descriptor::Descriptor(std::string img_path)
     cv::cuda::setDevice(0);
 }
 
+Descriptor::Descriptor(cv::Mat img)
+{
+    cv::Mat img_temp=img.clone();
+    cv::resize(img_temp,img_temp,cv::Size(),this->resize_scale,this->resize_scale);
+    this->img_ref.upload(img);
+
+    cv::cuda::printCudaDeviceInfo(cv::cuda::getDevice());
+    cv::cuda::setDevice(0);
+}
+
 void Descriptor::SURF_GPU(cv::Mat scene_img)
 {
     this->keypoints_1.clear();
@@ -57,7 +67,7 @@ void Descriptor::Ratio_test(int size,std::vector< cv::DMatch > matches)
     }
 
     for( int i = 0; i < size; i++ )
-    { if( matches[i].distance <= std::max(2*min_dist, 0.001) )
+    { if( matches[i].distance <= std::max(2*min_dist, 0.01) )
         { this->good_matches.push_back( matches[i]);
         }
     }
@@ -71,6 +81,7 @@ void Descriptor::Visualizer(cv::Mat scene_img,cv::Mat ref_img)
                  std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS );
 
     cv::imshow("test",img_matches);
+    cv::imwrite("./output/matching.png",img_matches);
 }
 
 void Descriptor::DrawBoundingBox(cv::Mat img)
@@ -109,6 +120,7 @@ void Descriptor::DrawBoundingBox(cv::Mat img)
     cv::circle(frame,this->scene_corners[1],2,cv::Scalar(0,0,255),3);
 
     imshow( "Detected object", frame);
+    cv::imwrite("./output/detected.png",frame);
 }
 
 void Descriptor::create_2dpoint_list()

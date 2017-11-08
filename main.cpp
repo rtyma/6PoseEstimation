@@ -5,15 +5,20 @@
 
 int main() {
 
-    Descriptor descriptor("./box.png");
+    std::string model="./detected.png";
+    std::string scene="./elastic_scene1.jpg";
+
+    cv::VideoCapture cap(1);
+    cv::Mat frame;
+    cap >> frame;
+    cv::Mat img=cv::imread(".box.png");
+
+    Descriptor descriptor(model);
     Visualizer visualizer;
     Pose pose(cv::Point2d(0,10),40);
 
-    cv::Mat img_ref=cv::imread("./box.png",cv::IMREAD_GRAYSCALE);
+    cv::Mat img_ref=cv::imread(model,cv::IMREAD_GRAYSCALE);
     cv::resize(img_ref,img_ref,cv::Size(),descriptor.resize_scale,descriptor.resize_scale);
-
-    cv::VideoCapture cap("box.mp4");
-    cv::Mat frame;
 
     std::vector<cv::Point3f> model_points;
     std::vector<cv::Point2f> img_points;
@@ -30,9 +35,9 @@ int main() {
     {
         start=clock();
 
-        //cap >> frame;
+        cap >> frame;
 
-        frame=cv::imread("./box_in_scene.png");
+        //frame=cv::imread(scene);
 
         cv::Mat rot_mat = cv::getRotationMatrix2D(cv::Point(frame.cols/2, frame.rows/2), i, 1.0);
 

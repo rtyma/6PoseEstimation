@@ -9,7 +9,7 @@ Pose::Pose(cv::Point2d center,double focal)
     this->default_model_points.push_back(cv::Point3f(0.0f, 0.0f, 0.0f));
     this->default_model_points.push_back(cv::Point3f(0.0f, 334.0f, 0.0f));
     this->default_model_points.push_back(cv::Point3f(486.0f, 334.0f, 0.0f));
-    this->default_model_points.push_back(cv::Point3f(486.0f, 30.0f, 0.0f));
+    this->default_model_points.push_back(cv::Point3f(486.0f, 0.0f, 0.0f));
     //this->default_model_points.push_back(cv::Point3f(-150.0f, -150.0f, -125.0f));
     //this->default_model_points.push_back(cv::Point3f(150.0f, -150.0f, -125.0f));
 
